@@ -12,7 +12,7 @@ const App = () => {
   const [newTodo, setNewTodo] = useState();
   const [todoList, setTodoList] = useState( () => {
     const savedItems = localStorage.getItem("todos")
-    return savedItems ? JSON.parse(savedItems) : tasks 
+    return savedItems ? JSON.parse(savedItems) : [] 
   });
 
   const [editTodoId, setEditTodoId] = useState(null);
@@ -75,31 +75,93 @@ const App = () => {
   return (
     <div className='h-screen'>
       {/* Input field */}
-      <div className='h-[150px] md:h-[200px] lg:h-[300px] bg-white flex items-center justify-center space-x-3 lg:space-x-5'>
-        <input type="text" placeholder='Enter Todos...' value={newTodo || ''} className='w-[70%] max-w-[700px] border-[1px]  border-gray-500 pl-3 lg:pl-7 h-[40px] lg:h-[60px] outline-none' onChange={handleChange}/>
-        <button className='h-[40px] lg:h-[60px] bg-green-500 px-5' onClick={addTodo}> + </button>
+      <div 
+      className='h-[150px] md:h-[200px] lg:h-[300px] bg-white flex items-center justify-center space-x-3 lg:space-x-5'>
+        <input 
+        type="text" 
+        placeholder='Enter Todos...' 
+        value={newTodo || ''} 
+        className='w-[70%] max-w-[700px] border-[1px]  border-gray-500 pl-3 lg:pl-7 h-[40px] lg:h-[60px] outline-none' 
+        onChange={handleChange}/>
+
+        {/* add button */}
+        <button 
+        className='h-[40px] lg:h-[60px] bg-green-500 px-5' 
+        onClick={addTodo}> 
+          +
+        </button>
       </div>
 
       {/* display todo */}
       <div className='px-[5%] py-[2%] bg-blue-400 h-screen'>
         {todoList.map((task,index) => (
-          <div key={task.id} className={`flex flex-col space-y-5 md:space-y-0 md:flex-row items-start justify-between py-5 px-7 lg:mb-7 transition-all ease-in-out duration-500`}>
+          <div 
+          key={task.id} 
+          className={`flex flex-col space-y-5 md:space-y-0 md:flex-row items-start justify-between py-5 px-7 lg:mb-7 transition-all ease-in-out duration-500`}>
+
+            {/* This div carries the number in 1 div and either the taskname or input tag in the second div */}
             <div className='flex items-start justify-start space-x-2 md:space-x-5'>
+              {/* Number */}
               <div>{index + 1}</div>
+
+              {/* taskname or input */}
               <div>
-              {editTodoId === task.id ? (<input type='text' placeholder='Enter new Todo...' value={editText}  onChange={(e) => setEditText(e.target.value)} className='w-[300px] md:w-[350px] lg:w-[500px] border-[1px]  border-gray-500 pl-1 lg:pl-3 h-[30px] lg:h-[60px] outline-none'/>) : (<div className={`w-[300px] md:max-w-[350px] lg:max-w-[500px] break-words ${task.completed ? 'line-through' : 'bg-none' }`}>{task.taskName}</div>) }
+                {editTodoId === task.id ? 
+                  (<input 
+                    type='text' 
+                    placeholder='Enter new Todo...' 
+                    value={editText}  
+                    onChange={(e) => setEditText(e.target.value)} className='w-[300px] md:w-[350px] lg:w-[500px] border-[1px]  border-gray-500 pl-1 lg:pl-3 placeholder:text-[12px] outline-none'/>) 
+                    : 
+                    (<div 
+                      className={`w-[300px] md:max-w-[350px] lg:max-w-[500px] break-words 
+                      ${task.completed ? 'line-through' : 'bg-none' }`}>
+                        {task.taskName}
+                    </div>) 
+                }
               </div>
             </div>
+
+            {/* this div carries the buttons, edit/save edit, done/undo or delete */}
             <div className='flex items-center space-x-4 lg:space-x-7'>
-              <div className='bg-gray-500 text-white h-[30px] lg:h-[45px] px-3 flex items-center justify-center'>
-              {editTodoId === task.id ?  (<button onClick={()=>saveEdit(task.id)}><FontAwesomeIcon icon={faSave}/></button>) : (<button onClick={()=> startEditing(task.id)}><FontAwesomeIcon icon={faPen}/></button> ) }
+              
+              {/* edit/save edit */}
+              <div 
+              className='bg-gray-500 text-white h-[30px] lg:h-[45px] px-3 flex items-center justify-center'>
+                {editTodoId === task.id ?  
+                  (<button 
+                    onClick={()=>saveEdit(task.id)}>
+                      <FontAwesomeIcon icon={faSave}/>
+                    </button>) 
+                    : 
+                    (<button 
+                      onClick={()=> startEditing(task.id)}>
+                        <FontAwesomeIcon icon={faPen}/>
+                    </button>) 
+                }
               </div>
              
+              {/* done/undo */}
               <div onClick={() => doneTodo(task.id)}>
-                {task.completed && task.id ? (<button className='bg-white text-red-500 h-[30px] lg:h-[45px] px-3'><FontAwesomeIcon icon={faArrowLeftRotate} /></button>) : (<button className='bg-white text-green-500 h-[30px] lg:h-[45px] px-3'><FontAwesomeIcon icon={faCheck}/></button>)}
+                {task.completed && task.id ? 
+                  (<button 
+                    className='bg-white text-red-500 h-[30px] lg:h-[45px] px-3'>
+                      <FontAwesomeIcon icon={faArrowLeftRotate} />
+                  </button>) 
+                  : 
+                  (<button 
+                    className='bg-white text-green-500 h-[30px] lg:h-[45px] px-3'>
+                      <FontAwesomeIcon icon={faCheck}/>
+                    </button>)
+                }
               </div>
 
-              <button onClick={() => deleteTodo(task.id)} className='h-[30px] lg:h-[45px] bg-red-500 px-3'><FontAwesomeIcon icon={faTrash}/></button>
+              {/* delete */}
+              <button 
+              onClick={() => deleteTodo(task.id)} 
+              className='h-[30px] lg:h-[45px] bg-red-500 px-3'>
+                <FontAwesomeIcon icon={faTrash}/>
+              </button>
 
             </div>
           </div>
