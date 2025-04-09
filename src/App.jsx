@@ -49,6 +49,11 @@ const App = () => {
 
   // deleteTodo
   const deleteTodo = (id) => {
+    if(id === editTodoId) {
+      setNewTodo("")
+      setEditTodoId(null)
+      setEditText("")
+    }
     setTodoList(todoList.filter((task) => task.id !== id))
   }
 
@@ -58,9 +63,10 @@ const App = () => {
   }
 
 
-  const startEditing = (id, currentText) => {
+  const startEditing = (id) => {
+    const taskToEdit = todoList.find(task => task.id === id)
     setEditTodoId(id);
-    setEditText(currentText || "");
+    setEditText(taskToEdit.taskName);
   }
 
   const saveEdit = (id) => {
@@ -110,7 +116,7 @@ const App = () => {
                   (<input 
                     type='text' 
                     placeholder='Enter new Todo...' 
-                    value={editText}  
+                    value={editText || ""}  
                     onChange={(e) => setEditText(e.target.value)} className='w-[300px] md:w-[350px] lg:w-[500px] border-[1px]  border-gray-500 pl-1 lg:pl-3 placeholder:text-[12px] outline-none'/>) 
                     : 
                     (<div 
